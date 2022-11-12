@@ -1,3 +1,5 @@
+# !!! UNDER CONTRUCTION !!! NOT FOR USE !!!
+
 # google-gig-cal
 
 Gig Cal is a system for using a public google calendar as content for a website or other javascript abled front-end.
@@ -6,6 +8,7 @@ Follow these conventions on your google calendar:
 
 1. By setting time-zone on google calendar events when it differs from the main calendar time-zone, Gig Cal is able to show the time in the time-zone local to event.  (e.g.  If you have a 6pm gig in London tomorrow, you may want your website to show 6pm rather than the time converted to the time-zone of the browser.)
 2. By putting links and image links in the event description, Gig Cal can extract them to be injected as links or images on your website.
+3. Make it 'public'
 
 ## Pre-requisites
 
@@ -57,6 +60,14 @@ const vEventsArray = GigCal.expand(response, options);
 
 ## TODOS
 
-add method to make html ?  ``GigCal.toHTML(GigCal.expand(response, options));``
+• write all tests
 
-add options for which properties to return, how to format date strings
+• write static methods on GigCal
+
+• add method to make html ?  ``GigCal.toHTML(GigCal.expand(response, options));``
+
+• add options for which properties to return, how to format date strings
+
+• service for gcal api
+
+• wordpress plugin version
