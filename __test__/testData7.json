@@ -1,0 +1,80 @@
+{
+  "kind": "calendar#events",
+  "etag": "\"p338bnlu7qv1fi0g\"",
+  "summary": "craig public test",
+  "updated": "2022-08-13T01:39:41.634Z",
+  "timeZone": "America/New_York",
+  "accessRole": "reader",
+  "defaultReminders": [],
+  "nextSyncToken": "CNC718fXwvkCEAAYASCX3aTnAQ==",
+  "items": [
+    {
+      "kind": "calendar#event",
+      "etag": "\"3316916478560000\"",
+      "id": "0jhneas0du36imjvjs0d4q8s5c",
+      "status": "confirmed",
+      "htmlLink": "https://www.google.com/calendar/event?eid=MGpobmVhczBkdTM2aW1qdmpzMGQ0cThzNWNfMjAyMjA4MDJUMDEzMDAwWiAxM2xqanV2ajgwMTdpbG85MGU2ZnJ0dThla0Bn",
+      "created": "2022-07-22T02:50:39.000Z",
+      "updated": "2022-07-22T02:50:39.280Z",
+      "summary": "test 7 time change on one of events",
+      "description": "see if its rrule, duplicate, or what",
+      "creator": {
+       "email": "craigdempsey@gmail.com"
+      },
+      "organizer": {
+       "email": "13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com",
+       "displayName": "craig public test",
+       "self": true
+      },
+      "start": {
+       "dateTime": "2022-08-01T21:30:00-04:00",
+       "timeZone": "America/New_York"
+      },
+      "end": {
+       "dateTime": "2022-08-01T22:30:00-04:00",
+       "timeZone": "America/New_York"
+      },
+      "recurrence": [
+       "RRULE:FREQ=DAILY;COUNT=5"
+      ],
+      "iCalUID": "0jhneas0du36imjvjs0d4q8s5c@google.com",
+      "sequence": 0,
+      "eventType": "default"
+     },
+     {
+      "kind": "calendar#event",
+      "etag": "\"3316916507842000\"",
+      "id": "0jhneas0du36imjvjs0d4q8s5c_20220804T013000Z",
+      "status": "confirmed",
+      "htmlLink": "https://www.google.com/calendar/event?eid=MGpobmVhczBkdTM2aW1qdmpzMGQ0cThzNWNfMjAyMjA4MDRUMDEzMDAwWiAxM2xqanV2ajgwMTdpbG85MGU2ZnJ0dThla0Bn",
+      "created": "2022-07-22T02:50:39.000Z",
+      "updated": "2022-07-22T02:50:53.921Z",
+      "summary": "test 7 time change on one of events",
+      "description": "see if its rrule, duplicate, or what",
+      "creator": {
+       "email": "craigdempsey@gmail.com"
+      },
+      "organizer": {
+       "email": "13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com",
+       "displayName": "craig public test",
+       "self": true
+      },
+      "start": {
+       "dateTime": "2022-08-03T21:00:00-04:00",
+       "timeZone": "America/New_York"
+      },
+      "end": {
+       "dateTime": "2022-08-03T22:00:00-04:00",
+       "timeZone": "America/New_York"
+      },
+      "recurringEventId": "0jhneas0du36imjvjs0d4q8s5c",
+      "originalStartTime": {
+       "dateTime": "2022-08-03T21:30:00-04:00",
+       "timeZone": "America/New_York"
+      },
+      "iCalUID": "0jhneas0du36imjvjs0d4q8s5c@google.com",
+      "sequence": 1,
+      "eventType": "default"
+     }
+  ]
+ }

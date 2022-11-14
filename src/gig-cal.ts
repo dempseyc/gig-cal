@@ -12,8 +12,6 @@ type ResponseType = {
   items: any[];
 };
 
-let outputObject: any[] = [];
-
 const NOW = Date.now();
 
 const NOW_PLUS_30_DAYS = new Date();
@@ -58,6 +56,9 @@ const trimISOdate = (ISOstr: string) => {
   return filtered.join("");
 };
 
+let outputObject: any[] = [];
+let usedIDs: string[] = [];
+
 export class GigCal {
   static expand(response: ResponseType, options: OptionsType = defaultOptions) {
     if (options) {
@@ -69,7 +70,9 @@ export class GigCal {
       options = Object.assign(defaultOptions, options);
     }
     outputObject = response.items;
+    // console.log(outputObject);
     outputObject = this._filterNoRRuleNotInTimespan(outputObject, options);
+    outputObject = this._replaceDatesWithISOstring(outputObject, options);
     outputObject = this._applyRRules(outputObject, options);
     outputObject = this._extractOccasions(outputObject, options);
     outputObject = this._minimizeData(outputObject, options);
@@ -94,6 +97,19 @@ export class GigCal {
     return arrayMinusNotInTimespan;
   }
 
+  static _replaceDatesWithISOstring(eventDataArray: any[], options: OptionsType) {
+    const convertToISOString = (date: string) => {
+      const newDate = new Date(date);
+      const string = newDate.toISOString();
+      return string;
+    }
+    return eventDataArray.map(eventData => {
+      eventData.start.dateTime = convertToISOString(eventData.start.dateTime || eventData.start.date);
+      eventData.end.dateTime = convertToISOString(eventData.end.dateTime || eventData.end.date);
+      return eventData;
+    })
+  }
+
   static _applyRRules(eventDataArray: any[], options: OptionsType) {
     const makeOccurrences = (eventData: any, options: OptionsType) => {
       let DTSTART = new Date(
@@ -113,6 +129,9 @@ export class GigCal {
       if (eventData.recurrence) {
         return makeOccurrences(eventData, options);
       }
+      if (eventData.recurringEventId) {
+        usedIDs.push(eventData.id);
+      }
       return eventData;
     });
 
@@ -130,21 +149,29 @@ export class GigCal {
 
   static _extractOccasions(eventDataArray: any[], options: OptionsType) {
     const arrayWithExtractedOccasions: any[] = [];
-    const makeReplicatedEvent = (eventData: any, occurrenceDate: string) => {
+
+    const makeReplicatedEvent = (eventData: any, occurrenceDate: string, occurrenceDateEnd: string) => {
       const occurrenceEvent = JSON.parse(JSON.stringify(eventData));
       occurrenceEvent.start.dateTime = occurrenceDate;
+      occurrenceEvent.end.dateTime = occurrenceDateEnd;
       occurrenceEvent.id = occurrenceEvent.id + "_" + trimISOdate(occurrenceDate);
-      // what about end ?
-      // also, make all times toISO string 000Z ?
+      // make all times toISO string 000Z ?
       return occurrenceEvent;
     };
 
     const makeEventsByOccurrence = (eventData: any, options: OptionsType) => {
       let newEvents: any[] = eventData.occurrences.map((date: Date) => {
-        const occurrenceDate = new Date(date).toISOString();
-        return makeReplicatedEvent(eventData, occurrenceDate);
+        const eventStart = new Date(eventData.end.dateTime).getTime();
+        const eventEnd = new Date(eventData.end.dateTime).getTime();
+        const eventLength = eventEnd - eventStart;
+        const occurrenceDate = new Date(date);
+        const occurrenceDateEnd = new Date(occurrenceDate.getTime() + eventLength);
+        occurrenceDateEnd.setTime(occurrenceDate.getTime() + eventLength);
+        const replicatedEvent = makeReplicatedEvent(eventData, occurrenceDate.toISOString(), occurrenceDateEnd.toISOString());
+        if (usedIDs.includes(replicatedEvent.id)) { return null; }
+        return replicatedEvent;
       });
-      return newEvents;
+      return newEvents.filter(event => event !== null);
     };
 
     eventDataArray.forEach(eventData => {

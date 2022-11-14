@@ -60,9 +60,21 @@ const vEventsArray = GigCal.expand(response, options);
 
 ## TODOS
 
-• write all tests
+X filter no reccurr, outside window
 
-• write static methods on GigCal
+X apply rrule
+
+X extract occurrences based on recurrences
+
+X minimize data
+
+_• write recurrence tests for cases
+
+• extract links, html, images
+
+• apply TZ for date strings
+
+_• write other tests
 
 • add method to make html ?  ``GigCal.toHTML(GigCal.expand(response, options));``
 

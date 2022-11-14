@@ -1,0 +1,111 @@
+{
+  "kind": "calendar#events",
+  "etag": "\"p338bnlu7qv1fi0g\"",
+  "summary": "craig public test",
+  "updated": "2022-08-13T01:39:41.634Z",
+  "timeZone": "America/New_York",
+  "accessRole": "reader",
+  "defaultReminders": [],
+  "nextSyncToken": "CNC718fXwvkCEAAYASCX3aTnAQ==",
+  "items": [
+   {
+    "kind": "calendar#event",
+    "etag": "\"3320709556586000\"",
+    "id": "6i1guf25q5ug92jkueogdu9a90",
+    "status": "confirmed",
+    "htmlLink": "https://www.google.com/calendar/event?eid=NmkxZ3VmMjVxNXVnOTJqa3Vlb2dkdTlhOTBfMjAyMjA4MTVUMjMwMDAwWiAxM2xqanV2ajgwMTdpbG85MGU2ZnJ0dThla0Bn",
+    "created": "2022-07-22T02:35:41.000Z",
+    "updated": "2022-08-13T01:39:38.293Z",
+    "summary": "test 1.2 infinite, within filter",
+    "description": "tests true *3",
+    "creator": {
+     "email": "craigdempsey@gmail.com"
+    },
+    "organizer": {
+     "email": "13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com",
+     "displayName": "craig public test",
+     "self": true
+    },
+    "start": {
+     "dateTime": "2022-08-15T19:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "end": {
+     "dateTime": "2022-08-15T20:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "recurrence": [
+     "RRULE:FREQ=WEEKLY;BYDAY=MO"
+    ],
+    "iCalUID": "6i1guf25q5ug92jkueogdu9a90@google.com",
+    "sequence": 2,
+    "eventType": "default"
+   },
+   {
+    "kind": "calendar#event",
+    "etag": "\"3320709559602000\"",
+    "id": "0b61pe324uv1u8jmg9j539ffkd",
+    "status": "confirmed",
+    "htmlLink": "https://www.google.com/calendar/event?eid=MGI2MXBlMzI0dXYxdThqbWc5ajUzOWZma2RfMjAyMjA3MjVUMjAwMDAwWiAxM2xqanV2ajgwMTdpbG85MGU2ZnJ0dThla0Bn",
+    "created": "2022-07-22T02:33:42.000Z",
+    "updated": "2022-08-13T01:39:39.801Z",
+    "summary": "test 1 infinite, before efd",
+    "description": "true * 5 mondays",
+    "creator": {
+     "email": "craigdempsey@gmail.com"
+    },
+    "organizer": {
+     "email": "13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com",
+     "displayName": "craig public test",
+     "self": true
+    },
+    "start": {
+     "dateTime": "2022-07-25T16:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "end": {
+     "dateTime": "2022-07-25T17:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "recurrence": [
+     "RRULE:FREQ=WEEKLY;BYDAY=MO"
+    ],
+    "iCalUID": "0b61pe324uv1u8jmg9j539ffkd@google.com",
+    "sequence": 0,
+    "eventType": "default"
+   },
+   {
+    "kind": "calendar#event",
+    "etag": "\"3320709563268000\"",
+    "id": "6bef90to6ou0khrvsnii93h7kj",
+    "status": "confirmed",
+    "htmlLink": "https://www.google.com/calendar/event?eid=NmJlZjkwdG82b3Uwa2hydnNuaWk5M2g3a2pfMjAyMjA5MDVUMjEwMDAwWiAxM2xqanV2ajgwMTdpbG85MGU2ZnJ0dThla0Bn",
+    "created": "2022-07-22T02:34:59.000Z",
+    "updated": "2022-08-13T01:39:41.634Z",
+    "summary": "test 1.1 infinite after lfd",
+    "description": "false",
+    "creator": {
+     "email": "craigdempsey@gmail.com"
+    },
+    "organizer": {
+     "email": "13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com",
+     "displayName": "craig public test",
+     "self": true
+    },
+    "start": {
+     "dateTime": "2022-09-05T17:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "end": {
+     "dateTime": "2022-09-05T18:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "recurrence": [
+     "RRULE:FREQ=DAILY"
+    ],
+    "iCalUID": "6bef90to6ou0khrvsnii93h7kj@google.com",
+    "sequence": 0,
+    "eventType": "default"
+   }
+  ]
+ }
