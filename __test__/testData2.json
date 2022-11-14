@@ -1,0 +1,45 @@
+{
+  "kind": "calendar#events",
+  "etag": "\"p338bnlu7qv1fi0g\"",
+  "summary": "craig public test",
+  "updated": "2022-08-13T01:39:41.634Z",
+  "timeZone": "America/New_York",
+  "accessRole": "reader",
+  "defaultReminders": [],
+  "nextSyncToken": "CNC718fXwvkCEAAYASCX3aTnAQ==",
+  "items": [
+   {
+    "kind": "calendar#event",
+    "etag": "\"3316916242836000\"",
+    "id": "35r46qa2m9fpbr5649vvqljfdk",
+    "status": "confirmed",
+    "htmlLink": "https://www.google.com/calendar/event?eid=MzVyNDZxYTJtOWZwYnI1NjQ5dnZxbGpmZGtfMjAyMjA3MjJUMDAwMDAwWiAxM2xqanV2ajgwMTdpbG85MGU2ZnJ0dThla0Bn",
+    "created": "2022-07-22T02:47:23.000Z",
+    "updated": "2022-07-22T02:48:41.418Z",
+    "summary": "test 4 recurr 4x 2 in range",
+    "description": "test true *2",
+    "creator": {
+     "email": "craigdempsey@gmail.com"
+    },
+    "organizer": {
+     "email": "13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com",
+     "displayName": "craig public test",
+     "self": true
+    },
+    "start": {
+     "dateTime": "2022-07-21T20:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "end": {
+     "dateTime": "2022-07-21T21:00:00-04:00",
+     "timeZone": "America/New_York"
+    },
+    "recurrence": [
+     "RRULE:FREQ=WEEKLY;WKST=SU;UNTIL=20220813T035959Z;BYDAY=TH"
+    ],
+    "iCalUID": "35r46qa2m9fpbr5649vvqljfdk@google.com",
+    "sequence": 1,
+    "eventType": "default"
+   }
+  ]
+ }
