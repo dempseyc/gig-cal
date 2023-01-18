@@ -47,14 +47,18 @@ type VEventType = {
   end: { date: string } | { dateTime: string; timeZone: string };
 };
 
-// rrule dates in ICS compatible format
+// return ICS format to be consumed by RRULE, given "2022-08-02T01:30:00.000Z" returns "20220802T013000Z"
 const trimISOdate = (ISOstr: string) => {
   const arr = ISOstr.split("");
   const filtered = arr.filter(
-    (char, i) => ![4, 7, 13, 16, 19, 20, 21, 22].includes(i)
+    (_, i) => ![4, 7, 13, 16, 19, 20, 21, 22].includes(i)
   );
   return filtered.join("");
 };
+
+export const exportForTesting = {
+  trimISOdate,
+}
 
 let outputObject: any[] = [];
 let usedIDs: string[] = [];
@@ -154,8 +158,8 @@ export class GigCal {
       const occurrenceEvent = JSON.parse(JSON.stringify(eventData));
       occurrenceEvent.start.dateTime = occurrenceDate;
       occurrenceEvent.end.dateTime = occurrenceDateEnd;
+      occurrenceEvent.recurringEventId = String(occurrenceEvent.id);
       occurrenceEvent.id = occurrenceEvent.id + "_" + trimISOdate(occurrenceDate);
-      // make all times toISO string 000Z ?
       return occurrenceEvent;
     };
 
@@ -196,18 +200,20 @@ export class GigCal {
 
 }
 
-// facts:
-//// id is different for a recurred event that's changed---appends date _20220804T013000Z
+// facts about events from Google API:
+//// id is different for a recurred event that's changed---appends datetime _20220804T013000Z
 //// also has recurringEventId pointing to id of original event
-//// Date.toISOString() // output: 2011-10-05T14:48:00.000Z // remove -:. and digit left of Z
-////
-// Create Date object (setting date to UTC)
-// const date1 = new Date(isoStr1);
-// console.log(date1); // Thu Jul 21 2022 12:35:31 GMT+0300
 
-// Create Date object (setting date to local time)
-// const date2 = new Date(isoStr1.slice(0, -1));
-// console.log(date2); // Thu Jul 21 2022 09:35:31 GMT+0300
+// a note about JS Dates from ISO
+const isoStr1 = "2011-10-05T14:48:00.000Z";
+// date is in GMT +0:00
+const date1 = new Date(isoStr1);
+// console.log(date1);  // 2011-10-05T14:48:00.000Z
+
+// date is shifted to "local" time -4:00 in on Oct 5 for ET DST in my location
+// note z is added back on, so can only use this as a string, not a time
+const date2 = new Date(isoStr1.slice(0, -1));
+// console.log(date2);  // 2011-10-05T18:48:00.000Z
 
 // exampleEvents
 const example1 = {
