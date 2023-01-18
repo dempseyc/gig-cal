@@ -30,29 +30,30 @@ describe("expand", () => {
 // 5.5 no recurrence falls after range, false
 // 7 recurring, but one occ time change, ??
 // 8 time is in paris at 6pm, what prints?
-// 8.1 shows link in description
+// 8.1 shows link from description
 
 describe("recurrence", () => {
-
   const countPerSummary = (array: any[]) => {
     let obj: any = {};
     array.forEach((item: any) => {
-      if (obj[item.summary]) { obj[item.summary] ++; }
-      else { obj[item.summary] = 1; }
-    })
+      if (obj[item.summary]) {
+        obj[item.summary]++;
+      } else {
+        obj[item.summary] = 1;
+      }
+    });
     return obj;
-  }
+  };
 
-  test("it should have a number of matches five for 1.0, 3 for 1.1, 0 for 1.2 = 8", () => {
+  test("test 1.xx, it should return correct number of events if recurrs in or out of range", () => {
     const options: OptionsType = {
       minTime: AugOneTime,
     };
     const result = GigCal.expand(response1, options);
-    console.log(result);
     expect(result).toHaveLength(8);
   });
 
-  test("7. recurring but one time change, it should show only one item for the changed event", () => {
+  test("test 7. recurring but one time change, it should show only one item for the changed event", () => {
     const options: OptionsType = {
       minTime: AugOneTime,
     };
@@ -60,22 +61,12 @@ describe("recurrence", () => {
     expect(result).toHaveLength(5);
     expect(result).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ summary: "test 7 time change on one of events" }),
+        expect.objectContaining({
+          summary: "test 7 time change on one of events",
+        }),
       ])
     );
   });
-
-  test("8 time is in paris at 6pm", () => {
-    const options: OptionsType = {
-      minTime: AugOneTime,
-    };
-    const result = GigCal.expand(response8, options);
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ startInLocaleString: "8/9/2022, 6:00:00 PM"})
-      ])
-    )
-  })
 
   test("check numbers of returns per summary", () => {
     const options: OptionsType = {
@@ -83,18 +74,78 @@ describe("recurrence", () => {
     };
     const result = GigCal.expand(responseAll, options);
     const expectedOutput = {
-        'Earliest Date noon 8/1': 1,
-        'test 4 recurr 4x 2 in range': 2,
-        'test 7 time change on one of events': 5,
-        'test 6 in-range': 1,
-        'test 8.xx its in paris at 6pm': 1,
-        'test 1.2 infinite, within filter': 3,
-        'test 1 infinite, before efd': 5
-       }
+      "Earliest Date noon 8/1": 1,
+      "test 4 recurr 4x 2 in range": 2,
+      "test 7 time change on one of events": 5,
+      "test 6 in-range": 1,
+      "test 8.xx its in paris at 6pm": 1,
+      "test 1.2 infinite, within filter": 3,
+      "test 1 infinite, before efd": 5,
+    };
     const counts = countPerSummary(result);
     expect(counts).toEqual(expect.objectContaining(expectedOutput));
-  })
+  });
+});
 
+
+
+describe("metadata", () => {
+  /// what should it be, also all have timeZone "USA, what if they dont?
+  // then the date should not use to localeString, but some other to string
+  test("test 8. time is in paris at 6pm and timezonebyevent option is false", () => {
+    const options: OptionsType = {
+      minTime: AugOneTime,
+      timeZoneByEvent: false,
+    };
+    const result = GigCal.expand(response8, options);
+    expect(result).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          // working on chrome in my TZ
+          startAsString: "Tue Aug 09 2022 12:00:00 GMT-0400 (Eastern Daylight Time)",
+        }),
+      ])
+    );
+  });
+
+  test("test 8. time is in paris at 6pm and timezonebyevent option is true", () => {
+    const options: OptionsType = {
+      minTime: AugOneTime,
+      timeZoneByEvent: true,
+    };
+    const result = GigCal.expand(response8, options);
+    expect(result).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          // working on chrome in my TZ
+          startAsString: "8/9/2022, 6:00:00 PM",
+        }),
+      ])
+    );
+  });
+
+  test("test 8.1 event obj should have array of urls if found in description", () => {
+    const options: OptionsType = {
+      minTime: AugOneTime,
+      // extractURLs: true, // is default
+      // extractImages: true, // is default
+    };
+    const result = GigCal.expand(response8, options);
+    // at least works for one case..  could do a loop of tests here with different formats
+    expect(result[0].urls).toEqual(expect.arrayContaining(["www.craigdempsey.com"]))
+  });
+
+  test("test 8.2 event obj should have array of image urls if found in description", () => {
+    const options: OptionsType = {
+      minTime: AugOneTime,
+      // extractURLs: true, // is default
+      // extractImages: true, // is default
+    };
+    const result = GigCal.expand(response8, options);
+    console.log(result);
+    // at least works for one case..  could do a loop of tests here with different formats
+    expect(result[0].images).toEqual(expect.arrayContaining(["www.craigdempsey.com/image.gif"]))
+  });
 });
 
 // TrimISODate given "2022-08-02T01:30:00.000Z" returns "20220802T013000Z"
@@ -102,5 +153,5 @@ describe("helpers", () => {
   test("TrimISODate should convert ISO date to ICS/rrule compatible format", () => {
     const result = exportForTesting.trimISOdate("2022-08-02T01:30:00.000Z");
     expect(result).toBe("20220802T013000Z");
-  })
-})
+  });
+});

@@ -45,7 +45,9 @@ type VEventType = {
   description: string;
   start: { date: string } | { dateTime: string; timeZone: string };
   end: { date: string } | { dateTime: string; timeZone: string };
-  startInLocaleString: string;
+  startAsString: string;
+  urls: string[] | null;
+  images: string[] | null;
 };
 
 // return ICS format to be consumed by RRULE, given "2022-08-02T01:30:00.000Z" returns "20220802T013000Z"
@@ -212,16 +214,30 @@ export class GigCal {
   } //extract occasions
 
   static _addMetadata(eventDataArray: any[], options: OptionsType) {
-    const inLocaleString = (date: string | Date, tzString: string) => {
-      return (typeof date === "string" ? new Date(date) : date).toLocaleString(
-        "en-US",
-        { timeZone: tzString }
-      );
-    };
-    const arrayWithMetadata = eventDataArray.map((eventData) => {
-      if (options.timeZoneByEvent && eventData.start.timeZone) {
-        eventData.startInLocaleString = inLocaleString(eventData.start.dateTime, eventData.start.timeZone);
+    const asString = (date: string | Date, tzString: string = "America/New_York") => {
+      let result;
+      if (options.timeZoneByEvent) {
+        result = (typeof date === "string" ? new Date(date) : date).toLocaleString(
+          "en-US",
+          { timeZone: tzString }
+        );
+      } else {
+        result = (typeof date === "string" ? new Date(date) : date).toString();
       }
+      return result;
+    };
+    const findURLs = (description: string, images: string[] | null) => {
+      const urlRegex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
+      return description.match(urlRegex)?.filter(url => !images?.includes(url));
+    };
+    const findImages = (description: string) => {
+      const imgRegex = /(http)?s?:?(\/\/)?[^ "']*\.(?:png|jpg|jpeg|gif|png|svg)/ig;
+      return description.match(imgRegex);
+    }
+    const arrayWithMetadata = eventDataArray.map((eventData) => {
+      eventData.startAsString = asString(eventData.start.dateTime, eventData.start?.timeZone);
+      eventData.images = findImages(eventData.description);
+      eventData.urls = findURLs(eventData.description, eventData.images);
       return eventData;
     });
     return arrayWithMetadata;
@@ -235,8 +251,10 @@ export class GigCal {
         description,
         start,
         end,
-        startInLocaleString,
-      }) => ({ id, summary, description, start, end, startInLocaleString }))(eventData);
+        startAsString,
+        urls,
+        images,
+      }) => ({ id, summary, description, start, end, startAsString, urls, images }))(eventData);
       return newObject;
     };
     return eventDataArray.map((eventData) => minimizeEventData(eventData));
