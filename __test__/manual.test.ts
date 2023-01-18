@@ -3,7 +3,7 @@ import { exportForTesting } from "../src/gig-cal";
 import { OptionsType } from "../lib/cjs/types/gig-cal";
 import * as response1 from "./testData1.json";
 import * as response7 from "./testData7.json";
-import * as response4 from "./testData4.json";
+import * as response8 from "./testData8.json";
 import * as responseAll from "./testData.json";
 
 const AugOne: Date = new Date("August 1, 2022 00:00:00");
@@ -64,6 +64,18 @@ describe("recurrence", () => {
       ])
     );
   });
+
+  test("8 time is in paris at 6pm", () => {
+    const options: OptionsType = {
+      minTime: AugOneTime,
+    };
+    const result = GigCal.expand(response8, options);
+    expect(result).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ startInLocaleString: "8/9/2022, 6:00:00 PM"})
+      ])
+    )
+  })
 
   test("check numbers of returns per summary", () => {
     const options: OptionsType = {

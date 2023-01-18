@@ -1,0 +1,43 @@
+{
+  "kind": "calendar#events",
+  "etag": "\"p338bnlu7qv1fi0g\"",
+  "summary": "craig public test",
+  "updated": "2022-08-13T01:39:41.634Z",
+  "timeZone": "America/New_York",
+  "accessRole": "reader",
+  "defaultReminders": [],
+  "nextSyncToken": "CNC718fXwvkCEAAYASCX3aTnAQ==",
+  "items": [
+    {
+      "kind": "calendar#event",
+      "etag": "\"3316918381278000\"",
+      "id": "3fggmt9srdersf4dnio8mtg8le",
+      "status": "confirmed",
+      "htmlLink": "https://www.google.com/calendar/event?eid=M2ZnZ210OXNyZGVyc2Y0ZG5pbzhtdGc4bGUgMTNsamp1dmo4MDE3aWxvOTBlNmZydHU4ZWtAZw",
+      "created": "2022-07-22T02:57:40.000Z",
+      "updated": "2022-07-22T03:06:30.639Z",
+      "summary": "test 8.xx its in paris at 6pm",
+      "description": "show in local or in paris time\n\nwww.craigdempsey.com",
+      "location": "The Comedy Club, 42 Bd de Bonne Nouvelle, 75010 Paris, France",
+      "creator": {
+        "email": "craigdempsey@gmail.com"
+      },
+      "organizer": {
+        "email": "13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com",
+        "displayName": "craig public test",
+        "self": true
+      },
+      "start": {
+        "dateTime": "2022-08-09T12:00:00-04:00",
+        "timeZone": "Europe/Paris"
+      },
+      "end": {
+        "dateTime": "2022-08-09T13:00:00-04:00",
+        "timeZone": "Europe/Paris"
+      },
+      "iCalUID": "3fggmt9srdersf4dnio8mtg8le@google.com",
+      "sequence": 0,
+      "eventType": "default"
+    }
+  ]
+}

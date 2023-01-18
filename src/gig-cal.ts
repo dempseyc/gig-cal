@@ -45,6 +45,7 @@ type VEventType = {
   description: string;
   start: { date: string } | { dateTime: string; timeZone: string };
   end: { date: string } | { dateTime: string; timeZone: string };
+  startInLocaleString: string;
 };
 
 // return ICS format to be consumed by RRULE, given "2022-08-02T01:30:00.000Z" returns "20220802T013000Z"
@@ -58,7 +59,7 @@ const trimISOdate = (ISOstr: string) => {
 
 export const exportForTesting = {
   trimISOdate,
-}
+};
 
 let outputObject: any[] = [];
 let usedIDs: string[] = [];
@@ -74,11 +75,11 @@ export class GigCal {
       options = Object.assign(defaultOptions, options);
     }
     outputObject = response.items;
-    // console.log(outputObject);
     outputObject = this._filterNoRRuleNotInTimespan(outputObject, options);
     outputObject = this._replaceDatesWithISOstring(outputObject, options);
     outputObject = this._applyRRules(outputObject, options);
     outputObject = this._extractOccasions(outputObject, options);
+    outputObject = this._addMetadata(outputObject, options);
     outputObject = this._minimizeData(outputObject, options);
     return outputObject;
   }
@@ -101,17 +102,24 @@ export class GigCal {
     return arrayMinusNotInTimespan;
   }
 
-  static _replaceDatesWithISOstring(eventDataArray: any[], options: OptionsType) {
+  static _replaceDatesWithISOstring(
+    eventDataArray: any[],
+    options: OptionsType
+  ) {
     const convertToISOString = (date: string) => {
       const newDate = new Date(date);
       const string = newDate.toISOString();
       return string;
-    }
-    return eventDataArray.map(eventData => {
-      eventData.start.dateTime = convertToISOString(eventData.start.dateTime || eventData.start.date);
-      eventData.end.dateTime = convertToISOString(eventData.end.dateTime || eventData.end.date);
+    };
+    return eventDataArray.map((eventData) => {
+      eventData.start.dateTime = convertToISOString(
+        eventData.start.dateTime || eventData.start.date
+      );
+      eventData.end.dateTime = convertToISOString(
+        eventData.end.dateTime || eventData.end.date
+      );
       return eventData;
-    })
+    });
   }
 
   static _applyRRules(eventDataArray: any[], options: OptionsType) {
@@ -154,12 +162,17 @@ export class GigCal {
   static _extractOccasions(eventDataArray: any[], options: OptionsType) {
     const arrayWithExtractedOccasions: any[] = [];
 
-    const makeReplicatedEvent = (eventData: any, occurrenceDate: string, occurrenceDateEnd: string) => {
+    const makeReplicatedEvent = (
+      eventData: any,
+      occurrenceDate: string,
+      occurrenceDateEnd: string
+    ) => {
       const occurrenceEvent = JSON.parse(JSON.stringify(eventData));
       occurrenceEvent.start.dateTime = occurrenceDate;
       occurrenceEvent.end.dateTime = occurrenceDateEnd;
       occurrenceEvent.recurringEventId = String(occurrenceEvent.id);
-      occurrenceEvent.id = occurrenceEvent.id + "_" + trimISOdate(occurrenceDate);
+      occurrenceEvent.id =
+        occurrenceEvent.id + "_" + trimISOdate(occurrenceDate);
       return occurrenceEvent;
     };
 
@@ -169,35 +182,65 @@ export class GigCal {
         const eventEnd = new Date(eventData.end.dateTime).getTime();
         const eventLength = eventEnd - eventStart;
         const occurrenceDate = new Date(date);
-        const occurrenceDateEnd = new Date(occurrenceDate.getTime() + eventLength);
+        const occurrenceDateEnd = new Date(
+          occurrenceDate.getTime() + eventLength
+        );
         occurrenceDateEnd.setTime(occurrenceDate.getTime() + eventLength);
-        const replicatedEvent = makeReplicatedEvent(eventData, occurrenceDate.toISOString(), occurrenceDateEnd.toISOString());
-        if (usedIDs.includes(replicatedEvent.id)) { return null; }
+        const replicatedEvent = makeReplicatedEvent(
+          eventData,
+          occurrenceDate.toISOString(),
+          occurrenceDateEnd.toISOString()
+        );
+        if (usedIDs.includes(replicatedEvent.id)) {
+          return null;
+        }
         return replicatedEvent;
       });
-      return newEvents.filter(event => event !== null);
+      return newEvents.filter((event) => event !== null);
     };
 
-    eventDataArray.forEach(eventData => {
+    eventDataArray.forEach((eventData) => {
       if (eventData.occurrences) {
         const extrapolated = makeEventsByOccurrence(eventData, options);
         arrayWithExtractedOccasions.push(...extrapolated);
       } else {
         arrayWithExtractedOccasions.push(eventData);
       }
-    })
+    });
 
     return arrayWithExtractedOccasions;
+  } //extract occasions
+
+  static _addMetadata(eventDataArray: any[], options: OptionsType) {
+    const inLocaleString = (date: string | Date, tzString: string) => {
+      return (typeof date === "string" ? new Date(date) : date).toLocaleString(
+        "en-US",
+        { timeZone: tzString }
+      );
+    };
+    const arrayWithMetadata = eventDataArray.map((eventData) => {
+      if (options.timeZoneByEvent && eventData.start.timeZone) {
+        eventData.startInLocaleString = inLocaleString(eventData.start.dateTime, eventData.start.timeZone);
+      }
+      return eventData;
+    });
+    return arrayWithMetadata;
   }
 
-  static _minimizeData (eventDataArray: any[], options: OptionsType) {
-    const minimizeEventData = ((eventData: any) => {
-      const newObject: VEventType = (({id, summary, description, start, end}) => ({id, summary, description, start, end}))(eventData);
+  static _minimizeData(eventDataArray: any[], options: OptionsType) {
+    const minimizeEventData = (eventData: any) => {
+      const newObject: VEventType = (({
+        id,
+        summary,
+        description,
+        start,
+        end,
+        startInLocaleString,
+      }) => ({ id, summary, description, start, end, startInLocaleString }))(eventData);
       return newObject;
-    })
+    };
     return eventDataArray.map((eventData) => minimizeEventData(eventData));
   }
-
 }
 
 // facts about events from Google API:
