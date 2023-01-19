@@ -48,6 +48,7 @@ type VEventType = {
   startAsString: string;
   urls: string[] | null;
   images: string[] | null;
+  mapLink: string | undefined;
 };
 
 // return ICS format to be consumed by RRULE, given "2022-08-02T01:30:00.000Z" returns "20220802T013000Z"
@@ -58,9 +59,24 @@ const trimISOdate = (ISOstr: string) => {
   );
   return filtered.join("");
 };
-
+const findURLs = (description: string, images: string[] | null) => {
+  const urlRegex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
+  return description.match(urlRegex)?.filter(url => !images?.includes(url));
+};
+const findImages = (description: string) => {
+  const imgRegex = /(http)?s?:?(\/\/)?[^ "']*\.(?:png|jpg|jpeg|gif|png|svg)/ig;
+  return description.match(imgRegex);
+}
+const templateMapLink = (location: string) => {
+  const uriAddressStr = encodeURIComponent(location);
+  const mapLink = `https://maps.google.com/maps?hl=en&q=${uriAddressStr}&source=calendar`;
+  return mapLink;
+}
 export const exportForTesting = {
   trimISOdate,
+  findImages,
+  findURLs,
+  templateMapLink,
 };
 
 let outputObject: any[] = [];
@@ -226,18 +242,11 @@ export class GigCal {
       }
       return result;
     };
-    const findURLs = (description: string, images: string[] | null) => {
-      const urlRegex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
-      return description.match(urlRegex)?.filter(url => !images?.includes(url));
-    };
-    const findImages = (description: string) => {
-      const imgRegex = /(http)?s?:?(\/\/)?[^ "']*\.(?:png|jpg|jpeg|gif|png|svg)/ig;
-      return description.match(imgRegex);
-    }
     const arrayWithMetadata = eventDataArray.map((eventData) => {
       eventData.startAsString = asString(eventData.start.dateTime, eventData.start?.timeZone);
       eventData.images = findImages(eventData.description);
       eventData.urls = findURLs(eventData.description, eventData.images);
+      if (eventData.location) eventData.mapLink = templateMapLink(eventData.location);
       return eventData;
     });
     return arrayWithMetadata;
@@ -254,7 +263,8 @@ export class GigCal {
         startAsString,
         urls,
         images,
-      }) => ({ id, summary, description, start, end, startAsString, urls, images }))(eventData);
+        mapLink,
+      }) => ({ id, summary, description, start, end, startAsString, urls, images, mapLink }))(eventData);
       return newObject;
     };
     return eventDataArray.map((eventData) => minimizeEventData(eventData));
@@ -272,7 +282,7 @@ const date1 = new Date(isoStr1);
 // console.log(date1);  // 2011-10-05T14:48:00.000Z
 
 // date is shifted to "local" time -4:00 in on Oct 5 for ET DST in my location
-// note z is added back on, so can only use this as a string, not a time
+// note z is added back on, so can only use this as a string, not for a Date object
 const date2 = new Date(isoStr1.slice(0, -1));
 // console.log(date2);  // 2011-10-05T18:48:00.000Z
 
@@ -367,8 +377,8 @@ const example2 = {
 //   let barSpan = "<span>|</span>";
 //   let uriTZID = encodeURIComponent(occ.timeZone);
 //   let uriNameStr = encodeURIComponent(occ.nameString);
-//   let uriAddressStr = encodeURIComponent(occ.addressString);
 //   let uriDetails = encodeURIComponent(occ.details);
+//   let uriAddressStr = encodeURIComponent(occ.addressString);
 //   let uriMapLink = `https://maps.google.com/maps?hl=en&q=${uriAddressStr}&source=calendar`;
 //   let uriCalLink = `https://calendar.google.com/calendar/event?action=TEMPLATE&hl=en&text=${uriNameStr}&dates=${occ.timeCode}&location=${uriAddressStr}&ctz=${uriTZID}&details=${uriDetails}`;
 //   let htmlOpen = `<li class="calendar-item">
@@ -398,3 +408,9 @@ const example2 = {
 //   let html = `${htmlOpen} ${htmlLocation} ${htmlLink} ${htmlClose}`;
 //   return html;
 // }
+
+
+// add to calendar // "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=M2ZnZ210OXNyZGVyc2Y0ZG5pbzhtdGc4bGUgMTNsamp1dmo4MDE3aWxvOTBlNmZydHU4ZWtAZw&tmsrc=13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com&catt=false&pprop=HowCreated:DUPLICATE&hl=en&scp=ONE"
+// https://www.google.com/calendar/event?eid=M2ZnZ210OXNyZGVyc2Y0ZG5pbzhtdGc4bGUgMTNsamp1dmo4MDE3aWxvOTBlNmZydHU4ZWtAZw"
+// slice at 42? to -1 to get eid plus need calendar id
+// https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=M29yNDBzNW40ajlpdWw0azNtcjNlY3YzMW4gMTNsamp1dmo4MDE3aWxvOTBlNmZydHU4ZWtAZw&tmsrc=13ljjuvj8017ilo90e6frtu8ek@group.calendar.google.com&catt=false&pprop=HowCreated:DUPLICATE&hl=en&scp=ONE

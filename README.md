@@ -1,4 +1,4 @@
-# !!! UNDER CONTRUCTION !!! NOT FOR USE !!!
+# !!! UNDER CONTRUCTION
 
 # google-gig-cal
 
@@ -6,13 +6,13 @@ Gig Cal is a system for using a public google calendar as content for a website 
 
 Follow these conventions on your google calendar:
 
-1. By setting time-zone on google calendar events when it differs from the main calendar time-zone, Gig Cal is able to show the time in the time-zone local to event.  (e.g.  If you have a 6pm gig in London tomorrow, you may want your website to show 6pm rather than the time converted to the time-zone of the browser.)
-2. By putting links and image links in the event description, Gig Cal can extract them to be injected as links or images on your website.
-3. Make it 'public'
+1. By setting time-zone on google calendar events when it differs from the main calendar time-zone, GigCal has an option to deliver date info in the time-zone local to event.  (e.g.  If you have a 6pm gig in London tomorrow, you may want your website to show 6pm rather than the time converted to the time-zone of the browser.)
+2. By putting links and image links in the event description, GigCal can extract them to be injected as links or images on your website.
+3. Making your calendar 'public' will simplify the process for accessing the data through the google API.
 
 ## Pre-requisites
 
-Google APIs require an API key assigned to an APP ID.  Since you don't want to expose the API key on your front-end, we assume you have a server endpoint which retrieves the calendar data to be consumed on the front-end and you are fetching data from that endpoint.  As an alternative, if your calendar is relatively static, you can use your key to download the json response from Google and store it as a file on your front-end.  [Google API Reference here.](https://developers.google.com/workspace/guides/create-credentials)
+Google APIs require an API key assigned to an APP ID.  Since you don't want to expose the API key on your front-end, we assume you have a server endpoint which retrieves the calendar data to be consumed on the front-end and you are fetching data from that endpoint.  As an alternative, if your calendar is relatively static, you can use your key to download the json response from Google and store it as a static file on your front-end.  [Google API Reference here.](https://developers.google.com/workspace/guides/create-credentials)
 
 ## Getting started
 
@@ -32,6 +32,7 @@ All options are optional.  The 'expand' method options argument is optional.  Se
 import GigCal from "gig-cal";
 // fetch and assign const response or import your static data
 import response from "./test/testData.json";
+// or const response = <<await fn()>>
 
 // just an example, don't forget to use .getTime() to convert to milliseconds
 const SixtyDaysLater = new Date();
@@ -52,7 +53,7 @@ const vEventsArray = GigCal.expand(response, options);
 /* vEventsArray be like
 [
   {
-    // properties
+    // event data properties, each occurance of recurring event has its own data object
   }
 ]
 */
@@ -68,18 +69,24 @@ X extract occurrences based on recurrences
 
 X minimize data
 
-_• write recurrence tests for cases
+X write recurrence tests for cases
 
-• extract links, html, images
+X extract links, html, images
 
-• apply TZ for date strings
+X apply TZ for date strings
 
-_• write other tests
+• more robust tests for links and image detection
 
-• add method to make html ?  ``GigCal.toHTML(GigCal.expand(response, options));``
+• structure logic to skip unnecessary functions based on options
+
+• create uriencoded maps link for location
+
+• create add to my calendar link
+
+• add method to template some html ?  ``GigCal.toHTML(GigCal.expand(response, options));``
 
 • add options for which properties to return, how to format date strings
 
-• service for gcal api
+• deploy service for gcal api
 
 • wordpress plugin version

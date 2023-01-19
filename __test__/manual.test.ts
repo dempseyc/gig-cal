@@ -146,6 +146,14 @@ describe("metadata", () => {
     // at least works for one case..  could do a loop of tests here with different formats
     expect(result[0].images).toEqual(expect.arrayContaining(["www.craigdempsey.com/image.gif"]))
   });
+    
+  test("8.xx event with location property should produce mapLink property", () => {
+    const options: OptionsType = {
+      minTime: AugOneTime,
+    };
+    const result = GigCal.expand(response8, options);
+    expect(result[0].mapLink).toBe("https://maps.google.com/maps?hl=en&q=The%20Comedy%20Club%2C%2042%20Bd%20de%20Bonne%20Nouvelle%2C%2075010%20Paris%2C%20France&source=calendar");
+  });
 });
 
 // TrimISODate given "2022-08-02T01:30:00.000Z" returns "20220802T013000Z"
@@ -154,4 +162,9 @@ describe("helpers", () => {
     const result = exportForTesting.trimISOdate("2022-08-02T01:30:00.000Z");
     expect(result).toBe("20220802T013000Z");
   });
+  test("templateMapLink should produce valid maps link", () => {
+    const result = exportForTesting.templateMapLink("The Comedy Club, 42 Bd de Bonne Nouvelle, 75010 Paris, France");
+    expect(result).toBe("https://maps.google.com/maps?hl=en&q=The%20Comedy%20Club%2C%2042%20Bd%20de%20Bonne%20Nouvelle%2C%2075010%20Paris%2C%20France&source=calendar");
+  })
+  // find urls, find img need bunch of testcases
 });
